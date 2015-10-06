@@ -25,9 +25,44 @@ namespace CertiPay.ACH.Tests
         // Full file generation(s)
 
         [Test, Unit]
-        public void Generate_File()
+        public void Generate_File_Header()
         {
+            new FileHeader
+            {
+                PriorityCode = 1,
+                ImmediateDestination = "051000033",
+                ImmediateOrigin = "059999997",
+                FileCreationDate = DateTime.Parse("10/6/2016"),
+                FileIDModifier = "A",
+                ImmediateDestinationName = "TCB Services",
+                ImmediateOriginName = "ABC TRUST"
+            }
+            .ToString()
+            .VerifyMe();
+        }
 
+        [Test, Unit]
+        public void Generate_File_Control()
+        {
+            // TODO
+        }
+
+        [Test, Unit]
+        public void Generate_Batch_Header()
+        {
+            // TODO
+        }
+
+        [Test, Unit]
+        public void Generate_Batch_Control()
+        {
+            // TODO
+        }
+
+        [Test, Unit]
+        public void Generate_Detail_Entry_1()
+        {
+            // TODO
         }
     }
 }
