@@ -341,19 +341,6 @@ namespace CertiPay.ACH
         {
             var output = new StringBuilder { };
 
-            if(this.Control.HasCredits && this.Control.HasDebits)
-            {
-                this.Header.ServiceClass = ServiceClassCode.Mixed_Debits_And_Credits;
-            }
-            else if(this.Control.HasDebits)
-            {
-                this.Header.ServiceClass = ServiceClassCode.Debits_Only;
-            }
-            else if(this.Control.HasCredits)
-            {
-                this.Header.ServiceClass = ServiceClassCode.Credits_Only;
-            }
-
             output.Append(this.Header);
 
             foreach (var entry in Entries)
@@ -458,10 +445,24 @@ namespace CertiPay.ACH
             var credits = new[] { TransactionCode.Checking_Credit, TransactionCode.Checking_Credit_Prenote, TransactionCode.Saving_Credit, TransactionCode.Saving_Credit_Prenote };
 
             this.TotalDebits = batch.Entries.Where(entry => debits.Contains(entry.Transaction_Code)).Sum(entry => entry.Amount);
-            this.HasDebits = batch.Entries.Where(entry => debits.Contains(entry.Transaction_Code)).Any();
 
             this.TotalCredits = batch.Entries.Where(entry => credits.Contains(entry.Transaction_Code)).Sum(entry => entry.Amount);
+
+            this.HasDebits = batch.Entries.Where(entry => debits.Contains(entry.Transaction_Code)).Any();
             this.HasCredits = batch.Entries.Where(entry => credits.Contains(entry.Transaction_Code)).Any();
+
+            if (HasCredits && HasDebits)
+            {
+                this.ServiceClass = batch.Header.ServiceClass = ServiceClassCode.Mixed_Debits_And_Credits;
+            }
+            else if (HasDebits)
+            {
+                this.ServiceClass = batch.Header.ServiceClass = ServiceClassCode.Debits_Only;
+            }
+            else if (HasCredits)
+            {
+                this.ServiceClass = batch.Header.ServiceClass = ServiceClassCode.Credits_Only;
+            }
         }
 
         public readonly int RecordType = 8;
