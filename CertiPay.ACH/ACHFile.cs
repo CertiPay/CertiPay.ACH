@@ -270,6 +270,8 @@ namespace CertiPay.ACH
 
             sb.Append((TotalCredits * 100).ToString().TrimAndPadLeft(12, '0')); // 123.45 => 000000012345
 
+            sb.Append(Reserved);
+
             sb.AppendLine();
 
             return sb.ToString();
@@ -338,6 +340,19 @@ namespace CertiPay.ACH
         public override string ToString()
         {
             var output = new StringBuilder { };
+
+            if(this.Control.HasCredits && this.Control.HasDebits)
+            {
+                this.Header.ServiceClass = ServiceClassCode.Mixed_Debits_And_Credits;
+            }
+            else if(this.Control.HasDebits)
+            {
+                this.Header.ServiceClass = ServiceClassCode.Debits_Only;
+            }
+            else if(this.Control.HasCredits)
+            {
+                this.Header.ServiceClass = ServiceClassCode.Credits_Only;
+            }
 
             output.Append(this.Header);
 
@@ -463,9 +478,9 @@ namespace CertiPay.ACH
 
         public Decimal TotalCredits = 0;
 
-        public Boolean HasDebits = false;
+        internal Boolean HasDebits = false;
 
-        public Boolean HasCredits = false;
+        internal Boolean HasCredits = false;
 
         public String CompanyIdentification = String.Empty;
 
