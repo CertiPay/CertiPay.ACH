@@ -27,7 +27,53 @@ namespace CertiPay.ACH.Tests
         {
             new ACHFile
             {
-                // TODO
+                Header = new FileHeader
+                {
+                    ImmediateDestination = "051000033",
+                    ImmediateOrigin = "059999997",
+                    FileCreationDateTime = DateTime.Parse("10/6/2016"),
+                    ImmediateDestinationName = "TCB Services",
+                    ImmediateOriginName = "ABC TRUST"
+                },
+                Batches = new[]
+                {
+                    new Batch
+                    {
+                        Header = new BatchHeader
+                        {
+                            CompanyName = "MY BEST COMP.",
+                            CompanyDiscreationaryData = "INCLUDES OVERTIME",
+                            CompanyId = "141987123",
+                            CompanyDescriptiveDate = DateTime.Parse("10/1/2015"),
+                            EffectiveEntryDate = DateTime.Parse("10/7/2015"),
+                            OriginatingDFIIdentification = "1099912",
+                            BatchNumber = 3400001
+                        },
+                        Entries = new[]
+                        {
+                            new EntryDetail
+                            {
+                                ReceivingDFIIdentification = "03100005",
+                                CheckDigit = 3,
+                                DFIAccountNumber = "1234567890",
+                                Amount = 100.00m,
+                                IndividualName = "Wagner, Matt",
+                                TraceNumber = "0310000500001",
+                                Transaction_Code = TransactionCode.Checking_Credit
+                            },
+                            new EntryDetail
+                            {
+                                ReceivingDFIIdentification = "03100005",
+                                CheckDigit = 3,
+                                DFIAccountNumber = "1234567891",
+                                Amount = 150.00m,
+                                IndividualName = "Smith, Steve",
+                                TraceNumber = "0310000500002",
+                                Transaction_Code = TransactionCode.Saving_Credit
+                            }
+                        }
+                    }
+                }
             }
             .ToString()
             .VerifyMe();

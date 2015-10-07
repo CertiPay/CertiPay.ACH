@@ -461,7 +461,7 @@ namespace CertiPay.ACH
 
             sb.Append(EffectiveEntryDate.ToString("yyMMdd"));
 
-            sb.Append(SettlementDate.TrimAndPadLeft(3, ' '));
+            sb.Append(SettlementDate.TrimAndPadLeft(3));
 
             sb.Append(OriginatorStatusCode);
 
