@@ -24,6 +24,7 @@ namespace CertiPay.ACH.Tests
         // Ensure file is "blocked"
 
         [Test, Unit]
+        [ApprovalTests.Reporters.UseReporter(typeof(ApprovalTests.Reporters.NUnitReporter))]
         public void Generate_File_1()
         {
             Approvals.Verify(
@@ -82,6 +83,7 @@ namespace CertiPay.ACH.Tests
         }
 
         [Test, Unit]
+        [ApprovalTests.Reporters.UseReporter(typeof(ApprovalTests.Reporters.NUnitReporter))]
         public void Generate_File_Header()
         {
             Approvals.Verify(
@@ -98,6 +100,7 @@ namespace CertiPay.ACH.Tests
         }
 
         [Test, Unit]
+        [ApprovalTests.Reporters.UseReporter(typeof(ApprovalTests.Reporters.NUnitReporter))]
         public void Generate_File_Control()
         {
             Approvals.Verify(
@@ -157,6 +160,7 @@ namespace CertiPay.ACH.Tests
         }
 
         [Test, Unit]
+        [ApprovalTests.Reporters.UseReporter(typeof(ApprovalTests.Reporters.NUnitReporter))]
         public void Generate_Batch_Header()
         {
             Approvals.Verify(
@@ -176,6 +180,7 @@ namespace CertiPay.ACH.Tests
         }
 
         [Test, Unit]
+        [ApprovalTests.Reporters.UseReporter(typeof(ApprovalTests.Reporters.NUnitReporter))]
         public void Generate_Batch_Control()
         {
             Approvals.Verify(
@@ -221,6 +226,7 @@ namespace CertiPay.ACH.Tests
         }
 
         [Test, Unit]
+        [ApprovalTests.Reporters.UseReporter(typeof(ApprovalTests.Reporters.NUnitReporter))]
         public void Generate_Detail_Entry_1()
         {
             Approvals.Verify(
