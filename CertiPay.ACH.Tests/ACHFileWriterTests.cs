@@ -23,6 +23,17 @@ namespace CertiPay.ACH.Tests
         // Ensure file is "blocked"
 
         [Test, Unit]
+        public void Generate_File_1()
+        {
+            new ACHFile
+            {
+                // TODO
+            }
+            .ToString()
+            .VerifyMe();
+        }
+
+        [Test, Unit]
         public void Generate_File_Header()
         {
             new FileHeader
@@ -42,7 +53,13 @@ namespace CertiPay.ACH.Tests
         [Test, Unit]
         public void Generate_File_Control()
         {
-            // TODO
+            new ACHFile
+            {
+                // TODO
+            }
+            .Control
+            .ToString()
+            .VerifyMe();
         }
 
         [Test, Unit]
@@ -70,13 +87,24 @@ namespace CertiPay.ACH.Tests
         [Test, Unit]
         public void Generate_Batch_Control()
         {
-            // TODO
+            new Batch
+            {
+                // TODO
+            }
+            .Control
+            .ToString()
+            .VerifyMe();
         }
 
         [Test, Unit]
         public void Generate_Detail_Entry_1()
         {
-            // TODO
+            new EntryDetail
+            {
+                // TODO
+            }
+            .ToString()
+            .VerifyMe();
         }
     }
 }
