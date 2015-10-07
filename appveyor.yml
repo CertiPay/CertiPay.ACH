@@ -45,7 +45,7 @@ nuget:
   disable_publish_on_pr: true     # disable publishing of .nupkg artifacts to account/project feeds for pull request builds
 
 artifacts:
-  - path: '**\CertiPay.*.nupkg'
+  - path: '**\CertiPay.ACH.*.nupkg'
 
 deploy:
 - provider: NuGet
