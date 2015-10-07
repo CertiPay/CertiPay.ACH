@@ -109,9 +109,7 @@ namespace CertiPay.ACH
 
         public static String GetFillerRecord()
         {
-            var nines = Enumerable.Range(1, CHARACTERS_PER_LINE).Select(_ => "9");
-
-            return String.Join(String.Empty, nines);
+            return new String('9', CHARACTERS_PER_LINE);
         }
     }
 
@@ -154,7 +152,7 @@ namespace CertiPay.ACH
 
         public int PriorityCode = 1;
 
-        public String ImmediateDestination = String.Empty;
+        public String ImmediateDestination = String.Empty; // ACHBankRoutingNumber
 
         public String ImmediateOrigin = String.Empty;
 
@@ -168,9 +166,9 @@ namespace CertiPay.ACH
 
         public readonly int BlockingFactor = 10;
 
-        public int FormatCode = 1;
+        public readonly int FormatCode = 1;
 
-        public String ImmediateDestinationName = String.Empty;
+        public String ImmediateDestinationName = String.Empty; // ACHFileBankName
 
         public String ImmediateOriginName = String.Empty;
 
@@ -184,7 +182,7 @@ namespace CertiPay.ACH
 
             sb.Append(PriorityCode.ToString().TrimAndPadLeft(2, '0'));
 
-            sb.Append(ImmediateDestination.TrimAndPadRight(10));
+            sb.Append(ImmediateDestination.TrimAndPadLeft(10));
 
             sb.Append(ImmediateOrigin.TrimAndPadRight(10));
 
@@ -236,9 +234,9 @@ namespace CertiPay.ACH
             this.EntryHash = CalculateEntryHash(file);
         }
 
-        public readonly int RecordType = 1;
+        public readonly int RecordType = 9;
 
-        public int BatchCount;
+        public int BatchCount = 0;
 
         public Decimal BlockCount = 0;
 
@@ -270,7 +268,7 @@ namespace CertiPay.ACH
 
             sb.Append((TotalCredits * 100).ToString().TrimAndPadLeft(12, '0')); // 123.45 => 000000012345
 
-            sb.Append(Reserved);
+            sb.Append(Reserved.TrimAndPadRight(39));
 
             sb.AppendLine();
 
@@ -363,25 +361,25 @@ namespace CertiPay.ACH
 
         public ServiceClassCode ServiceClass = ServiceClassCode.Mixed_Debits_And_Credits;
 
-        public String CompanyName = String.Empty;
+        public String CompanyName = String.Empty; // control name?
 
         public String CompanyDiscreationaryData = String.Empty;
 
-        public String CompanyId = String.Empty;
+        public String CompanyId = String.Empty; // ACH-EIN-Prefix + ControlEIN
 
-        public String StandardEntryClassCode = String.Empty;
+        public String StandardEntryClassCode = "PPD";
 
-        public String EntryDescription = String.Empty;
+        public String EntryDescription = "PAYROLL";
 
-        public String CompanyDescriptiveDate = String.Empty;
+        public DateTime CompanyDescriptiveDate = DateTime.Today; // CheckDate
 
         public DateTime EffectiveEntryDate = DateTime.Today;
 
-        public int SettlementDate;
+        public String SettlementDate = String.Empty;
 
-        public char OriginatorStatusCode;
+        public char OriginatorStatusCode = '1';
 
-        public String OriginatingDFIIdentification = String.Empty;
+        public String OriginatingDFIIdentification = String.Empty; // ACHBankRoutingNumber
 
         public int BatchNumber = 1;
 
@@ -403,11 +401,11 @@ namespace CertiPay.ACH
 
             sb.Append(EntryDescription.TrimAndPadRight(10));
 
-            sb.Append(CompanyDescriptiveDate.TrimAndPadRight(6));
+            sb.Append(CompanyDescriptiveDate.ToString("yyMMdd"));
 
             sb.Append(EffectiveEntryDate.ToString("yyMMdd"));
 
-            sb.Append(SettlementDate.ToString().TrimAndPadLeft(3, '0'));
+            sb.Append(SettlementDate.TrimAndPadLeft(3, ' '));
 
             sb.Append(OriginatorStatusCode);
 
@@ -467,9 +465,9 @@ namespace CertiPay.ACH
 
         public readonly int RecordType = 8;
 
-        public ServiceClassCode ServiceClass = ServiceClassCode.Debits_Only;
+        public ServiceClassCode ServiceClass = ServiceClassCode.Mixed_Debits_And_Credits;
 
-        public String CompanyId = String.Empty;
+        public String CompanyId = String.Empty; // group name or ACHEINPrefix + EIN
 
         public int EntryCount = 0;
 
@@ -568,11 +566,11 @@ namespace CertiPay.ACH
 
         public TransactionCode Transaction_Code = TransactionCode.Checking_Credit;
 
-        public String ReceivingDFIIdentification = String.Empty;
+        public String ReceivingDFIIdentification = String.Empty; // Routing # first 8
 
-        public int CheckDigit;
+        public int CheckDigit; // Routing # last 1
 
-        public String DFIAccountNumber = String.Empty;
+        public String DFIAccountNumber = String.Empty; // Bank Account #
 
         public Decimal Amount = Decimal.Zero;
 
@@ -584,7 +582,7 @@ namespace CertiPay.ACH
 
         public int AddendaRecordIndicator = 0;
 
-        public int TraceNumber = 0;
+        public int TraceNumber = 0; // Routing # + company record count
 
         public override string ToString()
         {
