@@ -233,6 +233,7 @@ namespace CertiPay.ACH.Tests
 
         [Test, Unit]
         [ApprovalTests.Reporters.UseReporter(typeof(ApprovalTests.Reporters.NUnitReporter))]
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Generate_Detail_Entry_1()
         {
             Approvals.Verify(
