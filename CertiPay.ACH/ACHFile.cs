@@ -115,7 +115,7 @@ namespace CertiPay.ACH
     /// </summary>
     public class FileHeader
     {
-        public int RecordTypeCode = 1;
+        public readonly int RecordTypeCode = 1;
 
         public int PriorityCode = 1;
 
@@ -182,7 +182,7 @@ namespace CertiPay.ACH
     {
         // TODO record_type, batch_count, block_count, entry_count, entry_hash, debit_total, credit_total, reserved
 
-        public String RecordType { get; set; }
+        //public readonly int RecordType = 6;
 
         public override string ToString()
         {
@@ -233,7 +233,7 @@ namespace CertiPay.ACH
     /// </summary>
     public class BatchHeader
     {
-        public int RecordTypeCode = 5;
+        public readonly int RecordTypeCode = 5;
 
         public ServiceClassCode ServiceClass = ServiceClassCode.Debits_Only;
 
@@ -315,41 +315,55 @@ namespace CertiPay.ACH
     /// </summary>
     public class EntryDetail
     {
-        // TODO
+        public readonly int RecordTypeCode = 6;
+
+        public TransactionCode Transaction_Code = TransactionCode.Checking_Credit;
+
+        public String ReceivingDFIIdentification = String.Empty;
+
+        public int CheckDigit;
+
+        public String DFIAccountNumber = String.Empty;
+
+        public Decimal Amount = Decimal.Zero;
+
+        public String IndividualIdentificationNumber = String.Empty;
+
+        public String IndividualName = String.Empty;
+
+        public String DiscretionaryData = String.Empty;
+
+        public int AddendaRecordIndicator = 0;
+
+        public int TraceNumber = 0;
 
         public override string ToString()
         {
             var sb = new StringBuilder(ACHFile.CHARACTERS_PER_LINE);
 
-            // TODO
+            sb.Append(RecordTypeCode);
+
+            sb.Append((int)Transaction_Code);
+
+            sb.Append(ReceivingDFIIdentification.TrimAndPadRight(8));
+
+            sb.Append(CheckDigit);
+
+            sb.Append(DFIAccountNumber.TrimAndPadRight(17));
+
+            sb.Append((Amount * 100).ToString().TrimAndPadLeft(10, '0')); // 123.45 => 0000012345
+
+            sb.Append(IndividualIdentificationNumber.TrimAndPadRight(15));
+
+            sb.Append(IndividualName.TrimAndPadRight(22));
+
+            sb.Append(DiscretionaryData.TrimAndPadRight(2));
+
+            sb.Append(AddendaRecordIndicator.ToString().TrimAndPadLeft(1, '0'));
+
+            sb.Append(TraceNumber.ToString().TrimAndPadLeft(15, '0'));
 
             return sb.ToString();
-        }
-    }
-
-    public static class StringExtensions
-    {
-        public static String TrimAndPadLeft(this String original, int length, char paddingChar = ' ')
-        {
-            return
-                original
-                .NotNull()
-                .PadLeft(length, paddingChar)
-                .Substring(0, length);
-        }
-
-        public static String TrimAndPadRight(this String original, int length, char paddingChar = ' ')
-        {
-            return
-                original
-                .NotNull()
-                .PadRight(length, paddingChar)
-                .Substring(0, length);
-        }
-
-        public static String NotNull(this String original)
-        {
-            return String.IsNullOrWhiteSpace(original) ? String.Empty : original;
         }
     }
 }
