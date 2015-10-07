@@ -148,31 +148,71 @@ namespace CertiPay.ACH
     /// </summary>
     public class FileHeader
     {
+        /// <summary>
+        /// THIS IS THE FIRST POSITION OF ALL RECORD FORMATS. THE CODE IS UNIQUE FOR EACH RECORD TYPE.
+        /// THE FILE HEADER RECORD USED RECORD TYPE CODE 1.
+        /// </summary>
         public readonly int RecordTypeCode = 1;
 
+        /// <summary>
+        /// PRIORITY CODES ARE NOT USED AT THIS TIME; THIS FIELD CONTAIN 01.
+        /// </summary>
         public int PriorityCode = 1;
 
+        /// <summary>
+        /// ENTER YOUR PNC BANK TRANSIT/ROUTING NUMBER PRECEDED BY A BLANK SPACE I.E. B999999999.
+        /// </summary>
         public String ImmediateDestination = String.Empty; // ACHBankRoutingNumber
 
+        /// <summary>
+        /// THIS FIELD IDENTIFIES THE ORGANIZATION OR COMPANY ORIGINATING THE
+        /// FILE. THE FIELD BEGINS WITH A NUMBER, USUALLY '1' AND THE ORIGINATOR'S
+        /// 9-DIGIT TAX ID WILL FOLLOW. IF THE FIELD CANNOT BE POPULATED WITH 10 DIGITS,
+        /// A BLANK AND 9 DIGITS CAN BE USED.
+        /// </summary>
         public String ImmediateOrigin = String.Empty;
 
+        /// <summary>
+        /// DATE WHEN THE ORIGINATOR CREATED THE FILE. THE DATE MUST BE IN "YYMMDD" FORMAT.
+        /// </summary>
         public DateTime FileCreationDateTime = DateTime.UtcNow;
 
         // public String FileCreationTime = String.Empty;
 
+        /// <summary>
+        /// THIS PROVIDES A MEANS FOR AN ORIGINATOR TO DISTINGUISH BETWEEN MULTIPLE FILES CREATED ON THE SAME DATE. ONLY UPPERCASE, A-Z AND NUMBERS, 0-9 ARE PERMITTED.
+        /// </summary>
         public String FileIDModifier = "A";
 
+        /// <summary>
+        /// THIS FIELD INDICATES THE NUMBER OF CHARACTERS CONTAINED IN EACH RECORD. THE VALUE 094 IS USED.
+        /// </summary>
         public readonly int RecordSize = 94;
 
+        /// <summary>
+        /// THIS BLOCKING FACTOR DEFINES THE NUMBER OF PHYSICAL RECORDS WITHIN A FILE. THE VALUE 10 MUST BE USED.
+        /// </summary>
         public readonly int BlockingFactor = 10;
 
+        /// <summary>
+        /// THIS FIELD MUST CONTAIN 1.
+        /// </summary>
         public readonly int FormatCode = 1;
 
+        /// <summary>
+        /// The bank name that you're sending to, i.e. "PNC BANK"
+        /// </summary>
         public String ImmediateDestinationName = String.Empty; // ACHFileBankName
 
+        /// <summary>
+        /// THIS FIELD IDENTIFIES THE ORIGINATOR OF THE FILE. THE NAME OF THE ORIGINATING COMPANY SHOULD BE USED.
+        /// </summary>
         public String ImmediateOriginName = String.Empty;
 
-        public String ReferenceCode = String.Empty;
+        /// <summary>
+        /// BLANKS FILL THIS FIELD.
+        /// </summary>
+        public readonly String ReferenceCode = String.Empty;
 
         public override string ToString()
         {
