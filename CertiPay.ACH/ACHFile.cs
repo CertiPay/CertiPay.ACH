@@ -57,8 +57,6 @@ namespace CertiPay.ACH
 
             output.Append(this.Header);
 
-            var lines = 2; // file header + control
-
             var batchNumber = 1;
 
             foreach (var batch in this.Batches)
@@ -66,9 +64,6 @@ namespace CertiPay.ACH
                 batch.Header.BatchNumber = batchNumber;
 
                 output.Append(batch);
-
-                lines += 2; // batch header + control
-                lines += batch.Entries.Count;
 
                 batchNumber++; // increment the batch number
             }
@@ -85,7 +80,7 @@ namespace CertiPay.ACH
 
             // A filler record is 94 characters of 9's
 
-            var linesNeeded = 10 - (lines % 10);
+            var linesNeeded = 10 - (GetNumberOfLines(this) % 10);
 
             var fillerRecord = GetFillerRecord();
 
@@ -95,6 +90,21 @@ namespace CertiPay.ACH
             }
 
             return output.ToString();
+        }
+
+        public static int GetNumberOfLines(ACHFile file)
+        {
+            var lines = 1; // file header
+
+            foreach (var batch in file.Batches)
+            {
+                lines += 2; // batch header + control
+                lines += batch.Entries.Count;
+            }
+
+            lines += 1; // file control
+
+            return lines;
         }
 
         public static String GetFillerRecord()
@@ -221,9 +231,7 @@ namespace CertiPay.ACH
             this.TotalCredits = file.Batches.Sum(batch => batch.Control.TotalCredits);
             this.TotalDebits = file.Batches.Sum(batch => batch.Control.TotalDebits);
 
-            // TODO Calculate block count
-
-            this.BlockCount = 10; // Math.Ceil(records / 10)
+            this.BlockCount = Math.Ceiling(ACHFile.GetNumberOfLines(file) / 10m);
 
             this.EntryHash = CalculateEntryHash(file);
         }
@@ -232,7 +240,7 @@ namespace CertiPay.ACH
 
         public int BatchCount;
 
-        public int BlockCount = 0;
+        public Decimal BlockCount = 0;
 
         public int EntryCount = 0;
 
