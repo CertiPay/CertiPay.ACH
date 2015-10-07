@@ -229,23 +229,47 @@ namespace CertiPay.ACH
             this.TotalCredits = file.Batches.Sum(batch => batch.Control.TotalCredits);
             this.TotalDebits = file.Batches.Sum(batch => batch.Control.TotalDebits);
 
-            this.BlockCount = Math.Ceiling(ACHFile.GetNumberOfLines(file) / 10m);
+            this.BlockCount = (int)Math.Ceiling(ACHFile.GetNumberOfLines(file) / 10m);
 
             this.EntryHash = CalculateEntryHash(file);
         }
 
+        /// <summary>
+        /// THIS IS THE FIRST POSITION FOR ALL RECORD FORMATS. THE NUMBER
+        /// IS UNIQUE FOR EACH RECORD TYPE. THE FILE CONTROL RECORD USES
+        /// RECORD TYPE CODE 9.
+        /// </summary>
         public readonly int RecordType = 9;
 
+        /// <summary>
+        /// VALUE MUST BE EQUAL TO THE NUMBER OF ‘8’ BATCH RECORDS IN FILE.
+        /// </summary>
         public int BatchCount = 0;
 
-        public Decimal BlockCount = 0;
+        /// <summary>
+        /// NUMBER OF PHYSICAL BLOCKS IN THE FILE, INCLUDING FILE HEADER AND FILE CONTROL RECORDS.
+        /// </summary>
+        public int BlockCount = 0;
 
+        /// <summary>
+        /// SUM OF ALL ‘6’ RECORDS AND ALSO '7' RECORDS, IF USED.
+        /// </summary>
         public int EntryCount = 0;
 
+        /// <summary>
+        /// SUM OF ALL RECEIVING DEPOSITORY FINANCIAL INSTITUTION IDS IN EACH ‘6’ RECORD.
+        /// IF SUM IS MORE THAN 10 POSITIONS, TRUNCATE LEFTMOST NUMBERS.
+        /// </summary>
         public String EntryHash = String.Empty;
 
+        /// <summary>
+        /// TOTAL OF ALL DEBIT AMOUNTS IN ‘8’ RECORDS, POSITIONS 21-32.
+        /// </summary>
         public Decimal TotalDebits = 0;
 
+        /// <summary>
+        /// TOTAL OF ALL CREDIT AMOUNTS IN ‘8’ RECORDS, POSITIONS 33-44.
+        /// </summary>
         public Decimal TotalCredits = 0;
 
         public readonly String Reserved = "      ";
@@ -357,30 +381,82 @@ namespace CertiPay.ACH
     /// </summary>
     public class BatchHeader
     {
+        /// <summary>
+        /// THIS IS THE FIRST POSITION FOR ALL RECORD FORMATS. CODE
+        /// IS UNIQUE FOR EACH RECORD TYPE.THE COMPANY/BATCH HEADER RECORD USED RECORD TYPE CODE 5.
+        /// </summary>
         public readonly int RecordTypeCode = 5;
 
+        /// <summary>
+        /// THE SERVICE CLASS CODE DEFINES THE TYPE OF ENTRIES CONTAINED IN THE BATCH.
+        /// </summary>
         public ServiceClassCode ServiceClass = ServiceClassCode.Mixed_Debits_And_Credits;
 
+        /// <summary>
+        /// THIS FIELD IDENTIFIES THE COMPANY THAT HAS THE RELATIONSHIP WITH
+        /// THE RECEIVERS OF THE ACH TRANSACTIONS. THE NAME MUST MATCH THE
+        /// "ACH EXHIBIT OR DOCUMENT B" FROM PNC BANK'S AGREEMENT. IN
+        /// ACCORDANCE WITH FEDERAL REGULATION E, MOST RECEIVING FINANCIAL
+        /// INSTITUTIONS WILL DISPLAY THIS FIELD ON THEIR CUSTOMER'S BANK STATEMENT.
+        /// </summary>
         public String CompanyName = String.Empty; // control name?
 
+        /// <summary>
+        /// RFERENCE INFORMATION FOR USE BY THE ORIGINATOR.
+        /// </summary>
         public String CompanyDiscreationaryData = String.Empty;
 
+        /// <summary>
+        /// THIS FIELD IDENTIFIES THE ORIGINATOR OF THE TRANSACTION VIA THE
+        /// ORIGINATOR'S FEDERAL TAX ID (IRS EIN). THIS FIELD BEGINS WITH THE
+        /// NUMBER 1, FOLLOWED BY THE COMPANY'S 9-DIGIT TAX ID (WITHOUT A
+        /// HYPHEN.) THE ID MUST MATCH THE ID LISTED ON THE "ACH EXHIBIT OR
+        /// DOCUMENT B" FROM THE BANK'S AGREEMENT.
+        /// </summary>
         public String CompanyId = String.Empty; // ACH-EIN-Prefix + ControlEIN
 
-        public String StandardEntryClassCode = "PPD";
+        /// <summary>
+        /// THIS FIELD DEFINES THE TYPE OF ACH ENTRIES CONTAINED IN THE BATCH.
+        /// ENTER: PPD (PREARRANGED PAYMENTS AND DEPOSITS) FOR CONSUMER TRANSACTIONS DESTINED TO AN INDIVIDUAL or CCD
+        /// (CASH CONCENTRATION OR DISBURSEMENT) FOR CORPORATE TRANSACTIONS.
+        /// </summary>
+        public readonly String StandardEntryClassCode = "PPD";
 
+        /// <summary>
+        /// THIS FIELD IS USED BY THE ORIGINATOR TO PROVIDE A DESCRIPTION
+        /// OF THE TRANSACTION FOR THE RECEIVER.FOR EXAMPLE, PAYROLL OR
+        /// DIVIDEND, ETC.IN ACCORDANCE WITH REGULATION E, MOST RECEIVING
+        /// BANKS WILL DISPLAY THIS FIELD ON THEIR BANK STATEMENT.
+        /// </summary>
         public String EntryDescription = "PAYROLL";
 
+        /// <summary>
+        /// THIS FIELD IS USED BY THE ORIGINATOR TO PROVIDE A DESCRIPTIVE DATE
+        /// FOR THE RECEIVER. THIS IS SOLELY FOR DESCRIPTIVE PURPOSES AND WILL
+        /// NOT BE USED TO CALCULATE SETTLEMENT OR USED FOR POSTING PURPOSES.
+        /// MANY RECEIVING FINANCIAL INSTITUTIONS WILL DISPLAY THIS FIELD ON
+        /// THE CONSUMER'S BANK STATEMENT.
+        /// </summary>
         public DateTime CompanyDescriptiveDate = DateTime.Today; // CheckDate
 
+        /// <summary>
+        /// THIS REPRESENTS THE DATE ON WHICH THE ORIGINATOR INTENDS A BATCH OF ENTRIES TO BE SETTLED.
+        /// </summary>
         public DateTime EffectiveEntryDate = DateTime.Today;
 
-        public String SettlementDate = String.Empty;
+        public readonly String SettlementDate = String.Empty;
 
-        public char OriginatorStatusCode = '1';
+        public readonly char OriginatorStatusCode = '1';
 
+        /// <summary>
+        /// ENTER THE FIRST 8 DIGITS OF YOUR BANK ABA OR TRANSIT ROUTING NUMBER.
+        /// </summary>
         public String OriginatingDFIIdentification = String.Empty; // ACHBankRoutingNumber
 
+        /// <summary>
+        /// USED BY THE ORIGINATOR TO ASSIGN A NUMBER
+        /// IN ASCENDING SEQUENCE TO EACH BATCH IN THE FILE.
+        /// </summary>
         public int BatchNumber = 1;
 
         public override string ToString()

@@ -71,12 +71,8 @@ namespace CertiPay.ACH.Tests
                 CompanyName = "MY BEST COMP.",
                 CompanyDiscreationaryData = "INCLUDES OVERTIME",
                 CompanyId = "141987123",
-                StandardEntryClassCode = "4PP",
-                EntryDescription = "DPAYROLL",
                 CompanyDescriptiveDate = DateTime.Parse("10/1/2015"),
                 EffectiveEntryDate = DateTime.Parse("10/7/2015"),
-                SettlementDate = "60",
-                OriginatorStatusCode = '2',
                 OriginatingDFIIdentification = "1099912",
                 BatchNumber = 3400001
             }
