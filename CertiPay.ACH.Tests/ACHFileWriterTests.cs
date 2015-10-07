@@ -20,6 +20,8 @@ namespace CertiPay.ACH.Tests
 
         // Full file generation(s)
 
+        // Ensure file is "blocked"
+
         [Test, Unit]
         public void Generate_File_Header()
         {

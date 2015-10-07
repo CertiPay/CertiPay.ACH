@@ -13,31 +13,16 @@ namespace CertiPay.ACH
 
         public virtual ICollection<Batch> Batches { get; set; }
 
-        public virtual FileControl Control { get; set; }
+        public virtual FileControl Control { get { return new FileControl(this); } }
 
         public ACHFile()
         {
             this.Header = new FileHeader { };
             this.Batches = new List<Batch>();
-            this.Control = new FileControl { };
         }
 
         public virtual String Generate()
         {
-            // Sequence:
-
-            // File header record
-
-            // Company/Batch header record
-
-            // Entry detail, corporate entry detail record
-
-            // Addenda record
-
-            // Company/Batch control record
-
-            // File control record
-
             // Data Specifications:
 
             // Alphameric and Alphabetic fields: left-justified and space filled
@@ -58,25 +43,55 @@ namespace CertiPay.ACH
 
             var output = new StringBuilder { };
 
+            // Sequence (1): File header record
+
+            // Sequence (2): Company/Batch header record
+
+            // Sequence (3): Entry detail, corporate entry detail record
+
+            // Sequence (4): Addenda record
+
+            // Sequence (5): Company/Batch control record
+
+            // Sequence (6): File control record
+
             output.Append(this.Header);
 
             var lines = 2; // file header + control
 
+            var batchNumber = 1;
+
             foreach (var batch in this.Batches)
             {
+                batch.Header.BatchNumber = batchNumber;
+
                 output.Append(batch);
 
                 lines += 2; // batch header + control
                 lines += batch.Entries.Count;
+
+                batchNumber++; // increment the batch number
             }
 
             output.Append(this.Control);
 
+            // An ACH file must be "BLOCKED":
+
+            // contain enough ACH records to form a complete "block" (10 records = 1 block = 940 characters)
+
+            // All records within each ACH file are counted (headers, controls, entry details, addenda)
+
+            // If the total number of records do not equal a complete block, "9 filler records" must be added to complete the block
+
+            // A filler record is 94 characters of 9's
+
             var linesNeeded = 10 - (lines % 10);
+
+            var fillerRecord = GetFillerRecord();
 
             foreach (var i in Enumerable.Range(1, linesNeeded))
             {
-                output.AppendLine(GetFillerRecord());
+                output.AppendLine(fillerRecord);
             }
 
             return output.ToString();
@@ -84,8 +99,6 @@ namespace CertiPay.ACH
 
         public static String GetFillerRecord()
         {
-            // Returns a line of 94 characters of 9's
-
             var nines = Enumerable.Range(1, CHARACTERS_PER_LINE).Select(_ => "9");
 
             return String.Join(String.Empty, nines);
@@ -98,7 +111,7 @@ namespace CertiPay.ACH
 
         Checking_Debit = 27,
 
-        Checking_Credit_Prenot = 23,
+        Checking_Credit_Prenote = 23,
 
         Checking_Debit_Prenote = 28,
 
@@ -194,27 +207,64 @@ namespace CertiPay.ACH
     /// </summary>
     public class FileControl
     {
-        // TODO record_type, batch_count, block_count, entry_count, entry_hash, debit_total, credit_total, reserved
+        public FileControl()
+        {
+            // Nothing to do here
+        }
+
+        internal FileControl(ACHFile file)
+        {
+            this.BatchCount = file.Batches.Count;
+
+            this.EntryCount = file.Batches.Sum(batch => batch.Entries.Count);
+
+            this.TotalCredits = file.Batches.Sum(batch => batch.Control.TotalCredits);
+            this.TotalDebits = file.Batches.Sum(batch => batch.Control.TotalDebits);
+
+            // TODO Calculate block count
+
+            this.BlockCount = 10; // Math.Ceil(records / 10)
+
+            // TODO Calculate entry hash
+
+            this.EntryHash = 10;
+        }
 
         public readonly int RecordType = 1;
 
         public int BatchCount;
 
-        public String BlockCount;
+        public int BlockCount = 0;
 
-        public String EntryAddendaCount;
+        public int EntryCount = 0;
 
-        public String EntryHash;
+        public Decimal EntryHash = 0;
 
-        public String TotalDebits;
+        public Decimal TotalDebits = 0;
 
-        public String TotalCredits;
+        public Decimal TotalCredits = 0;
+
+        public readonly String Reserved = "      ";
 
         public override string ToString()
         {
             var sb = new StringBuilder(ACHFile.CHARACTERS_PER_LINE);
 
-            // TODO
+            sb.Append(RecordType);
+
+            sb.Append(BatchCount.ToString().TrimAndPadLeft(6, '0'));
+
+            sb.Append(BlockCount.ToString().TrimAndPadLeft(6, '0'));
+
+            sb.Append(EntryCount.ToString().TrimAndPadLeft(8, '0'));
+
+            // TODO Format entry hash
+
+            sb.Append(EntryHash);
+
+            sb.Append((TotalDebits * 100).ToString().TrimAndPadLeft(12, '0')); // 123.45 => 000000012345
+
+            sb.Append((TotalCredits * 100).ToString().TrimAndPadLeft(12, '0')); // 123.45 => 000000012345
 
             sb.AppendLine();
 
@@ -228,15 +278,14 @@ namespace CertiPay.ACH
 
         public virtual ICollection<EntryDetail> Entries { get; set; }
 
-        public virtual BatchControl Control { get; set; }
+        public virtual BatchControl Control { get { return new BatchControl(this); } }
 
-        // Addendas
+        // TODO Addendas?
 
         public Batch()
         {
             this.Header = new BatchHeader { };
             this.Entries = new List<EntryDetail>();
-            this.Control = new BatchControl { };
         }
 
         public override string ToString()
@@ -263,7 +312,7 @@ namespace CertiPay.ACH
     {
         public readonly int RecordTypeCode = 5;
 
-        public ServiceClassCode ServiceClass = ServiceClassCode.Debits_Only;
+        public ServiceClassCode ServiceClass = ServiceClassCode.Mixed_Debits_And_Credits;
 
         public String CompanyName = String.Empty;
 
@@ -328,13 +377,118 @@ namespace CertiPay.ACH
     /// </summary>
     public class BatchControl
     {
-        // Control - entry_count, debit_total, credit_total, entry_hash, has_debits, has_credits
+        public BatchControl()
+        {
+            // Nothing to do here
+        }
+
+        internal BatchControl(Batch batch)
+        {
+            this.ServiceClass = batch.Header.ServiceClass;
+            this.CompanyId = batch.Header.CompanyId;
+
+            this.EntryCount = batch.Entries.Count;
+
+            this.EntryHash = CalculateEntryHash(batch);
+
+            var debits = new[] { TransactionCode.Checking_Debit, TransactionCode.Checking_Debit_Prenote, TransactionCode.Saving_Debit, TransactionCode.Saving_Debit_Prenote };
+
+            var credits = new[] { TransactionCode.Checking_Credit, TransactionCode.Checking_Credit_Prenote, TransactionCode.Saving_Credit, TransactionCode.Saving_Credit_Prenote };
+
+            this.TotalDebits = batch.Entries.Where(entry => debits.Contains(entry.Transaction_Code)).Sum(entry => entry.Amount);
+            this.HasDebits = batch.Entries.Where(entry => debits.Contains(entry.Transaction_Code)).Any();
+
+            this.TotalCredits = batch.Entries.Where(entry => credits.Contains(entry.Transaction_Code)).Sum(entry => entry.Amount);
+            this.HasCredits = batch.Entries.Where(entry => credits.Contains(entry.Transaction_Code)).Any();
+        }
+
+        public readonly int RecordType = 8;
+
+        public ServiceClassCode ServiceClass = ServiceClassCode.Debits_Only;
+
+        public String CompanyId = String.Empty;
+
+        public int EntryCount = 0;
+
+        public String EntryHash = String.Empty;
+
+        public Decimal TotalDebits = 0;
+
+        public Decimal TotalCredits = 0;
+
+        public Boolean HasDebits = false;
+
+        public Boolean HasCredits = false;
+
+        public String CompanyIdentification = String.Empty;
+
+        public String MessageAuthenticationCode = String.Empty;
+
+        public readonly String Reserved = "      ";
+
+        public static String CalculateEntryHash(Batch batch)
+        {
+            //FOR EACH ORIGINATED TRANSACTION, YOU HAVE
+            //GENERATED A TYPE ‘6’ OR ENTRY DETAIL RECORD. ON THE
+            //ENTRY DETAIL RECORD THERE IS A RECEIVING DEPOSITORY
+            //FINANANCIAL INSTITUTION (RDFI)IDENTIFICATION(TRANSIT
+            //ROUTING NUMBER) LOCATED IN POSITIONS 4 THROUGH 11.
+            //THE FIRST 8 DIGITS OF EACH RDFI’s TRANSIT ROUTING
+            //NUMBER IS TREATED AS A NUMBER.
+
+            //ALL TRANSIT ROUTING NUMBERS WITHIN THE BATCH ARE
+            //ADDED TOGETHER FOR THE ENTRY HASH ON THE TYPE '8',
+            //BATCH CONTROL RECORD.ALL TRANSIT ROUTING NUMBERS
+            //WITHIN EACH FILE ARE ADDED TOGETHER TO CALCULATE THE
+            //VALUE OF THE ENTRY HASH ON THE TYPE '9', FILE CONTROL
+            //RECORD. (NOTE: DO NOT INCLUDE THE CHECK DIGIT OF THE
+            //TRANSIT ROUTING NUMBER, POSITION 12, IN THIS
+            //CALCULATION.) THE ENTRY HASH CALCULATIION CHECK IS
+            //USED IN THE PNC BANK FILE EDITING PROCESS TO HELP
+            //ENSURE DATA INTEGRITY OF THE BATCH AND FILE
+            //GENERATED BY YOUR PROCESSING.
+
+            var sum =
+                batch
+                .Entries
+                .Select(entry => entry.ReceivingDFIIdentification)
+                .Select(routingNumber => routingNumber.Substring(0, 8))
+                .Select(substring => Decimal.Parse(substring))
+                .Sum();
+
+            //IF THE SUM OF THE RDFI TRANSIT ROUTING NUMBERS IS A
+            //NUMBER GREATER THAN TEN DIGITS, REMOVE OR DROP THE
+            //NUMBER OF DIGITS FROM THE LEFT SIDE OF THE NUMBER
+            //UNTIL ONLY TEN DIGITS REMAIN. FOR EXAMPLE, IF THE SUM
+            //OF THE TRANSIT ROUTING NUMBERS IS 234567898765,
+            //REMOVE THE “23” FOR A HASH OF 4567898765.
+
+            var last10 = sum % 10000000000;
+
+            return last10.ToString();
+        }
 
         public override string ToString()
         {
             var sb = new StringBuilder(ACHFile.CHARACTERS_PER_LINE);
 
-            // TODO
+            sb.Append(RecordType);
+
+            sb.Append((int)ServiceClass);
+
+            sb.Append(EntryCount.ToString().TrimAndPadLeft(6, '0'));
+
+            sb.Append(EntryHash.TrimAndPadLeft(10, '0'));
+
+            sb.Append(TotalDebits);
+
+            sb.Append(TotalCredits);
+
+            sb.Append(CompanyId);
+
+            sb.Append(MessageAuthenticationCode);
+
+            sb.Append(Reserved);
 
             sb.AppendLine();
 
