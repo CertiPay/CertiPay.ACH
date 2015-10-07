@@ -73,9 +73,9 @@ namespace CertiPay.ACH.Tests
                 CompanyId = "141987123",
                 StandardEntryClassCode = "4PP",
                 EntryDescription = "DPAYROLL",
-                CompanyDescriptiveDate = "0602",
+                CompanyDescriptiveDate = DateTime.Parse("10/1/2015"),
                 EffectiveEntryDate = DateTime.Parse("10/7/2015"),
-                SettlementDate = 60,
+                SettlementDate = "60",
                 OriginatorStatusCode = '2',
                 OriginatingDFIIdentification = "1099912",
                 BatchNumber = 3400001
@@ -101,7 +101,12 @@ namespace CertiPay.ACH.Tests
         {
             new EntryDetail
             {
-                // TODO
+                ReceivingDFIIdentification = "03100005",
+                CheckDigit = 3,
+                DFIAccountNumber = "1234567890",
+                Amount = 100.00m,
+                IndividualName = "Wagner, Matt",
+                TraceNumber = "0310000500001"
             }
             .ToString()
             .VerifyMe();
