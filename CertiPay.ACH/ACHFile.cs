@@ -288,9 +288,9 @@ namespace CertiPay.ACH
 
             sb.Append(EntryHash.TrimAndPadLeft(10, '0'));
 
-            sb.Append((TotalDebits * 100).ToString().TrimAndPadLeft(12, '0')); // 123.45 => 000000012345
+            sb.Append((TotalDebits * 100).ToString("0").TrimAndPadLeft(12, '0')); // 123.45 => 000000012345
 
-            sb.Append((TotalCredits * 100).ToString().TrimAndPadLeft(12, '0')); // 123.45 => 000000012345
+            sb.Append((TotalCredits * 100).ToString("0").TrimAndPadLeft(12, '0')); // 123.45 => 000000012345
 
             sb.Append(Reserved.TrimAndPadRight(39));
 
@@ -629,9 +629,9 @@ namespace CertiPay.ACH
 
             sb.Append(EntryHash.TrimAndPadLeft(10, '0'));
 
-            sb.Append((TotalDebits * 100).ToString().TrimAndPadLeft(12, '0'));
+            sb.Append((TotalDebits * 100).ToString("0").TrimAndPadLeft(12, '0'));
 
-            sb.Append((TotalCredits * 100).ToString().TrimAndPadLeft(12, '0'));
+            sb.Append((TotalCredits * 100).ToString("0").TrimAndPadLeft(12, '0'));
 
             sb.Append(CompanyId.TrimAndPadRight(10));
 
@@ -733,7 +733,7 @@ namespace CertiPay.ACH
 
             sb.Append(DFIAccountNumber.TrimAndPadRight(17));
 
-            sb.Append((Amount * 100).ToString().TrimAndPadLeft(10, '0')); // 123.45 => 0000012345
+            sb.Append((Amount * 100).ToString("0").TrimAndPadLeft(10, '0')); // 123.45 => 0000012345
 
             sb.Append(IndividualIdentificationNumber.TrimAndPadRight(15));
 
