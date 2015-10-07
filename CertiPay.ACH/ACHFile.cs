@@ -1,5 +1,4 @@
-﻿using FileHelpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,9 +7,7 @@ namespace CertiPay.ACH
 {
     public class ACHFile
     {
-        internal static readonly Encoding FileEncoding = System.Text.Encoding.UTF8;
-
-        internal const int characters_per_line = 94;
+        internal const int CHARACTERS_PER_LINE = 94;
 
         public virtual FileHeader Header { get; set; }
 
@@ -77,7 +74,7 @@ namespace CertiPay.ACH
         {
             // Returns a line of 94 characters of 9's
 
-            var nines = Enumerable.Range(1, characters_per_line).Select(_ => "9");
+            var nines = Enumerable.Range(1, CHARACTERS_PER_LINE).Select(_ => "9");
 
             return String.Join(String.Empty, nines);
         }
@@ -116,74 +113,84 @@ namespace CertiPay.ACH
     /// <summary>
     /// Where did it come from and where is it going?
     /// </summary>
-    [FixedLengthRecord]
     public class FileHeader
     {
-        private static readonly IFileHelperEngine<FileHeader> _engine = new FileHelperEngine<FileHeader>(ACHFile.FileEncoding);
-
-        [FieldFixedLength(1)]
         public int RecordTypeCode = 1;
 
-        [FieldFixedLength(2)]
-        [FieldAlign(AlignMode.Right, '0')]
         public int PriorityCode = 1;
 
-        [FieldFixedLength(10)]
         public String ImmediateDestination = String.Empty;
 
-        [FieldFixedLength(10)]
         public String ImmediateOrigin = String.Empty;
 
-        [FieldFixedLength(6)]
-        [FieldConverter(ConverterKind.Date, "YYMMDD")]
-        public DateTime FileCreationDate = DateTime.UtcNow;
+        public DateTime FileCreationDateTime = DateTime.UtcNow;
 
-        [FieldFixedLength(4)]
-        public String FileCreationTime = String.Empty;
+        // public String FileCreationTime = String.Empty;
 
-        [FieldFixedLength(1)]
         public String FileIDModifier = "A";
 
-        [FieldFixedLength(3)]
-        [FieldAlign(AlignMode.Right, '0')]
-        public int RecordSize = 94;
+        public readonly int RecordSize = 94;
 
-        [FieldFixedLength(2)]
-        public int BlockingFactor = 10;
+        public readonly int BlockingFactor = 10;
 
-        [FieldFixedLength(1)]
         public int FormatCode = 1;
 
-        [FieldFixedLength(23)]
         public String ImmediateDestinationName = String.Empty;
 
-        [FieldFixedLength(23)]
         public String ImmediateOriginName = String.Empty;
 
-        [FieldFixedLength(8)]
         public String ReferenceCode = String.Empty;
 
         public override string ToString()
         {
-            return _engine.WriteString(new[] { this });
+            var sb = new StringBuilder(ACHFile.CHARACTERS_PER_LINE);
+
+            sb.Append(RecordTypeCode);
+
+            sb.Append(PriorityCode.ToString().PadLeft(2, '0'));
+
+            sb.Append(ImmediateDestination.PadRight(10));
+
+            sb.Append(ImmediateOrigin.PadRight(10));
+
+            sb.Append(FileCreationDateTime.ToString("yyMMdd"));
+
+            sb.Append(FileCreationDateTime.ToString("HHmm"));
+
+            sb.Append(FileIDModifier);
+
+            sb.Append(RecordSize.ToString().PadLeft(3, '0'));
+
+            sb.Append(BlockingFactor);
+
+            sb.Append(FormatCode);
+
+            sb.Append(ImmediateDestinationName.PadRight(23));
+
+            sb.Append(ImmediateOriginName.PadRight(23));
+
+            sb.Append(ReferenceCode.PadRight(8));
+
+            return sb.ToString();
         }
     }
 
     /// <summary>
     /// Grand total of transactions and amounts
     /// </summary>
-    [FixedLengthRecord]
     public class FileControl
     {
-        private static readonly IFileHelperEngine<FileControl> _engine = new FileHelperEngine<FileControl>(ACHFile.FileEncoding);
-
         // TODO record_type, batch_count, block_count, entry_count, entry_hash, debit_total, credit_total, reserved
 
         public String RecordType { get; set; }
 
         public override string ToString()
         {
-            return _engine.WriteString(new[] { this });
+            var sb = new StringBuilder(ACHFile.CHARACTERS_PER_LINE);
+
+            // TODO
+
+            return sb.ToString();
         }
     }
 
@@ -224,48 +231,125 @@ namespace CertiPay.ACH
     /// <summary>
     /// Who is it from and what is it?
     /// </summary>
-    [FixedLengthRecord]
     public class BatchHeader
     {
-        private static readonly IFileHelperEngine<BatchHeader> _engine = new FileHelperEngine<BatchHeader>(ACHFile.FileEncoding);
+        public int RecordTypeCode = 5;
 
-        // Header - record_type (5), service_class_code, company_name, company_discretionary_data, company_identification, standard_entry_class_code, company_entry_description, company_descriptive_date, effective_entry_date, settlement_date, originator_status_code, originating_dfi_identification, batch_number
+        public ServiceClassCode ServiceClass = ServiceClassCode.Debits_Only;
+
+        public String CompanyName = String.Empty;
+
+        public String CompanyDiscreationaryData = String.Empty;
+
+        public String CompanyId = String.Empty;
+
+        public String StandardEntryClassCode = String.Empty;
+
+        public String EntryDescription = String.Empty;
+
+        public String CompanyDescriptiveDate = String.Empty;
+
+        public DateTime EffectiveEntryDate = DateTime.Today;
+
+        public int SettlementDate;
+
+        public char OriginatorStatusCode;
+
+        public String OriginatingDFIIdentification = String.Empty;
+
+        public int BatchNumber = 1;
 
         public override string ToString()
         {
-            return _engine.WriteString(new[] { this });
+            var sb = new StringBuilder(ACHFile.CHARACTERS_PER_LINE);
+
+            sb.Append(RecordTypeCode);
+
+            sb.Append((int)ServiceClass);
+
+            sb.Append(CompanyName.PadRight(16));
+
+            sb.Append(CompanyDiscreationaryData.PadRight(20));
+
+            sb.Append(CompanyId.PadRight(10));
+
+            sb.Append(StandardEntryClassCode.PadRight(3));
+
+            sb.Append(EntryDescription.PadRight(10));
+
+            sb.Append(CompanyDescriptiveDate.PadRight(6));
+
+            sb.Append(EffectiveEntryDate.ToString("yyMMdd"));
+
+            sb.Append(SettlementDate.ToString().PadLeft(3, '0'));
+
+            sb.Append(OriginatorStatusCode);
+
+            sb.Append(OriginatingDFIIdentification.PadRight(8));
+
+            sb.Append(BatchNumber.ToString().PadLeft(7, '0'));
+
+            return sb.ToString();
         }
     }
 
     /// <summary>
     /// How many transactions and total amounts?
     /// </summary>
-    [FixedLengthRecord]
     public class BatchControl
     {
-        private static readonly IFileHelperEngine<BatchControl> _engine = new FileHelperEngine<BatchControl>(ACHFile.FileEncoding);
-
         // Control - entry_count, debit_total, credit_total, entry_hash, has_debits, has_credits
 
         public override string ToString()
         {
-            return _engine.WriteString(new[] { this });
+            var sb = new StringBuilder(ACHFile.CHARACTERS_PER_LINE);
+
+            // TODO
+
+            return sb.ToString();
         }
     }
 
     /// <summary>
     /// What is the RDFI, receiver, and amount?
     /// </summary>
-    [FixedLengthRecord]
     public class EntryDetail
     {
-        private static readonly IFileHelperEngine<EntryDetail> _engine = new FileHelperEngine<EntryDetail>(ACHFile.FileEncoding);
-
         // TODO
 
         public override string ToString()
         {
-            return _engine.WriteString(new[] { this });
+            var sb = new StringBuilder(ACHFile.CHARACTERS_PER_LINE);
+
+            // TODO
+
+            return sb.ToString();
+        }
+    }
+
+    public static class StringExtensions
+    {
+        public static String TrimAndPadLeft(this String original, int length, char paddingChar = ' ')
+        {
+            return
+                original
+                .NotNull()
+                .PadLeft(length, paddingChar)
+                .Substring(0, length);
+        }
+
+        public static String TrimAndPadRight(this String original, int length, char paddingChar = ' ')
+        {
+            return
+                original
+                .NotNull()
+                .PadRight(length, paddingChar)
+                .Substring(0, length);
+        }
+
+        public static String NotNull(this String original)
+        {
+            return String.IsNullOrWhiteSpace(original) ? String.Empty : original;
         }
     }
 }

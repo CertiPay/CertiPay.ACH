@@ -83,6 +83,7 @@
   <ItemGroup>
     <Compile Include="ACHFileWriterTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StringExtensionsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

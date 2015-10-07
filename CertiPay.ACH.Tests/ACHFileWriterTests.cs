@@ -1,10 +1,6 @@
 ﻿using CertiPay.Common.Testing;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CertiPay.ACH.Tests
 {
@@ -32,7 +28,7 @@ namespace CertiPay.ACH.Tests
                 PriorityCode = 1,
                 ImmediateDestination = "051000033",
                 ImmediateOrigin = "059999997",
-                FileCreationDate = DateTime.Parse("10/6/2016"),
+                FileCreationDateTime = DateTime.Parse("10/6/2016"),
                 FileIDModifier = "A",
                 ImmediateDestinationName = "TCB Services",
                 ImmediateOriginName = "ABC TRUST"
@@ -50,7 +46,23 @@ namespace CertiPay.ACH.Tests
         [Test, Unit]
         public void Generate_Batch_Header()
         {
-            // TODO
+            new BatchHeader
+            {
+                ServiceClass = ServiceClassCode.Debits_Only,
+                CompanyName = "MY BEST COMP.",
+                CompanyDiscreationaryData = "INCLUDES OVERTIME",
+                CompanyId = "141987123",
+                StandardEntryClassCode = "4PP",
+                EntryDescription = "DPAYROLL",
+                CompanyDescriptiveDate = "0602",
+                EffectiveEntryDate = DateTime.Parse("10/7/2015"),
+                SettlementDate = 60,
+                OriginatorStatusCode = '2',
+                OriginatingDFIIdentification = "1099912",
+                BatchNumber = 3400001
+            }
+            .ToString()
+            .VerifyMe();
         }
 
         [Test, Unit]
