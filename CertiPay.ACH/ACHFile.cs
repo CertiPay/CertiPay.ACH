@@ -710,7 +710,7 @@ namespace CertiPay.ACH
         /// <summary>
         /// LAST DIGIT OF RECEIVER'S BANK TRANSIT ROUTING NUMBER.
         /// </summary>
-        public int CheckDigit;
+        public char CheckDigit;
 
         /// <summary>
         /// THIS IS THE RECEIVER’S BANK ACCOUNT NUMBER. IF THE ACCOUNT NUMBER

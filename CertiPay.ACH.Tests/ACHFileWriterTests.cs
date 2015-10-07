@@ -57,7 +57,7 @@ namespace CertiPay.ACH.Tests
                                 new EntryDetail
                                 {
                                     ReceivingDFIIdentification = "03100005",
-                                    CheckDigit = 3,
+                                    CheckDigit = '3',
                                     DFIAccountNumber = "1234567890",
                                     Amount = 100.00m,
                                     IndividualName = "Wagner, Matt",
@@ -67,7 +67,7 @@ namespace CertiPay.ACH.Tests
                                 new EntryDetail
                                 {
                                     ReceivingDFIIdentification = "03100005",
-                                    CheckDigit = 3,
+                                    CheckDigit = '3',
                                     DFIAccountNumber = "1234567891",
                                     Amount = 150.00m,
                                     IndividualName = "Smith, Steve",
@@ -133,7 +133,7 @@ namespace CertiPay.ACH.Tests
                                 new EntryDetail
                                 {
                                     ReceivingDFIIdentification = "03100005",
-                                    CheckDigit = 3,
+                                    CheckDigit = '3',
                                     DFIAccountNumber = "1234567890",
                                     Amount = 100.00m,
                                     IndividualName = "Wagner, Matt",
@@ -143,7 +143,7 @@ namespace CertiPay.ACH.Tests
                                 new EntryDetail
                                 {
                                     ReceivingDFIIdentification = "03100005",
-                                    CheckDigit = 3,
+                                    CheckDigit = '3',
                                     DFIAccountNumber = "1234567891",
                                     Amount = 150.00m,
                                     IndividualName = "Smith, Steve",
@@ -201,7 +201,7 @@ namespace CertiPay.ACH.Tests
                         new EntryDetail
                         {
                             ReceivingDFIIdentification = "03100005",
-                            CheckDigit = 3,
+                            CheckDigit = '3',
                             DFIAccountNumber = "1234567890",
                             Amount = 100.00m,
                             IndividualName = "Wagner, Matt",
@@ -211,7 +211,7 @@ namespace CertiPay.ACH.Tests
                         new EntryDetail
                         {
                             ReceivingDFIIdentification = "03100005",
-                            CheckDigit = 3,
+                            CheckDigit = '3',
                             DFIAccountNumber = "1234567891",
                             Amount = 150.00m,
                             IndividualName = "Smith, Steve",
@@ -233,7 +233,7 @@ namespace CertiPay.ACH.Tests
                 new EntryDetail
                 {
                     ReceivingDFIIdentification = "03100005",
-                    CheckDigit = 3,
+                    CheckDigit = '3',
                     DFIAccountNumber = "1234567890",
                     Amount = 100.00m,
                     IndividualName = "Wagner, Matt",
