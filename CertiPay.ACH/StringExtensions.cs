@@ -9,6 +9,7 @@ namespace CertiPay.ACH
             return
                 original
                 .NotNull()
+                .ToUpper()
                 .PadLeft(length, paddingChar)
                 .Substring(0, length);
         }
@@ -18,6 +19,7 @@ namespace CertiPay.ACH
             return
                 original
                 .NotNull()
+                .ToUpper()
                 .PadRight(length, paddingChar)
                 .Substring(0, length);
         }
