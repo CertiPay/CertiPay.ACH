@@ -147,29 +147,29 @@ namespace CertiPay.ACH
 
             sb.Append(RecordTypeCode);
 
-            sb.Append(PriorityCode.ToString().PadLeft(2, '0'));
+            sb.Append(PriorityCode.ToString().TrimAndPadLeft(2, '0'));
 
-            sb.Append(ImmediateDestination.PadRight(10));
+            sb.Append(ImmediateDestination.TrimAndPadRight(10));
 
-            sb.Append(ImmediateOrigin.PadRight(10));
+            sb.Append(ImmediateOrigin.TrimAndPadRight(10));
 
             sb.Append(FileCreationDateTime.ToString("yyMMdd"));
 
             sb.Append(FileCreationDateTime.ToString("HHmm"));
 
-            sb.Append(FileIDModifier);
+            sb.Append(FileIDModifier.TrimAndPadRight(1));
 
-            sb.Append(RecordSize.ToString().PadLeft(3, '0'));
+            sb.Append(RecordSize.ToString().TrimAndPadLeft(3, '0'));
 
             sb.Append(BlockingFactor);
 
             sb.Append(FormatCode);
 
-            sb.Append(ImmediateDestinationName.PadRight(23));
+            sb.Append(ImmediateDestinationName.TrimAndPadRight(23));
 
-            sb.Append(ImmediateOriginName.PadRight(23));
+            sb.Append(ImmediateOriginName.TrimAndPadRight(23));
 
-            sb.Append(ReferenceCode.PadRight(8));
+            sb.Append(ReferenceCode.TrimAndPadRight(8));
 
             return sb.ToString();
         }
@@ -267,27 +267,27 @@ namespace CertiPay.ACH
 
             sb.Append((int)ServiceClass);
 
-            sb.Append(CompanyName.PadRight(16));
+            sb.Append(CompanyName.TrimAndPadRight(16));
 
-            sb.Append(CompanyDiscreationaryData.PadRight(20));
+            sb.Append(CompanyDiscreationaryData.TrimAndPadRight(20));
 
-            sb.Append(CompanyId.PadRight(10));
+            sb.Append(CompanyId.TrimAndPadRight(10));
 
-            sb.Append(StandardEntryClassCode.PadRight(3));
+            sb.Append(StandardEntryClassCode.TrimAndPadRight(3));
 
-            sb.Append(EntryDescription.PadRight(10));
+            sb.Append(EntryDescription.TrimAndPadRight(10));
 
-            sb.Append(CompanyDescriptiveDate.PadRight(6));
+            sb.Append(CompanyDescriptiveDate.TrimAndPadRight(6));
 
             sb.Append(EffectiveEntryDate.ToString("yyMMdd"));
 
-            sb.Append(SettlementDate.ToString().PadLeft(3, '0'));
+            sb.Append(SettlementDate.ToString().TrimAndPadLeft(3, '0'));
 
             sb.Append(OriginatorStatusCode);
 
-            sb.Append(OriginatingDFIIdentification.PadRight(8));
+            sb.Append(OriginatingDFIIdentification.TrimAndPadRight(8));
 
-            sb.Append(BatchNumber.ToString().PadLeft(7, '0'));
+            sb.Append(BatchNumber.ToString().TrimAndPadLeft(7, '0'));
 
             return sb.ToString();
         }
