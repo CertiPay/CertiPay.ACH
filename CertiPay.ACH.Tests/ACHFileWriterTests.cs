@@ -2,6 +2,7 @@
 using CertiPay.Common.Testing;
 using NUnit.Framework;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace CertiPay.ACH.Tests
 {
@@ -25,6 +26,7 @@ namespace CertiPay.ACH.Tests
 
         [Test, Unit]
         [ApprovalTests.Reporters.UseReporter(typeof(ApprovalTests.Reporters.NUnitReporter))]
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Generate_File_1()
         {
             Approvals.Verify(
@@ -84,6 +86,7 @@ namespace CertiPay.ACH.Tests
 
         [Test, Unit]
         [ApprovalTests.Reporters.UseReporter(typeof(ApprovalTests.Reporters.NUnitReporter))]
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Generate_File_Header()
         {
             Approvals.Verify(
@@ -101,6 +104,7 @@ namespace CertiPay.ACH.Tests
 
         [Test, Unit]
         [ApprovalTests.Reporters.UseReporter(typeof(ApprovalTests.Reporters.NUnitReporter))]
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Generate_File_Control()
         {
             Approvals.Verify(
@@ -161,6 +165,7 @@ namespace CertiPay.ACH.Tests
 
         [Test, Unit]
         [ApprovalTests.Reporters.UseReporter(typeof(ApprovalTests.Reporters.NUnitReporter))]
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Generate_Batch_Header()
         {
             Approvals.Verify(
@@ -181,6 +186,7 @@ namespace CertiPay.ACH.Tests
 
         [Test, Unit]
         [ApprovalTests.Reporters.UseReporter(typeof(ApprovalTests.Reporters.NUnitReporter))]
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Generate_Batch_Control()
         {
             Approvals.Verify(
