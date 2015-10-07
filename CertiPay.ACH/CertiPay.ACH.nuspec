@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>CertiPay.ACH</id>
+    <version>1.0.0</version>
+    <title>CertiPay.ACH</title>
+    <tags>certipay, utilities, ach, banking</tags>
+    <description>This library is intended to hold some common items used in our system like logging or queue management</description>
+    <projectUrl>https://github.com/CertiPay/CertiPay.ACH</projectUrl>
+    <licenseUrl>https://github.com/CertiPay/CertiPay.ACH/blob/master/LICENSE.md</licenseUrl>
+    <authors>CertiPay, Matt Wagner</authors>
+    <owners>Matt Wagner</owners>
+  </metadata>
+  <files>
+    <file src="bin\Release\CertiPay.ACH*" target="lib\net451" />
+    <file src="..\README.md" target="tools" />
+    <file src="..\LICENSE.md" target="tools" />
+  </files>
+</package>
