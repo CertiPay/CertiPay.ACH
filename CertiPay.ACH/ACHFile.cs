@@ -60,12 +60,24 @@ namespace CertiPay.ACH
 
             output.Append(this.Header);
 
+            var lines = 2; // file header + control
+
             foreach (var batch in this.Batches)
             {
                 output.Append(batch);
+
+                lines += 2; // batch header + control
+                lines += batch.Entries.Count;
             }
 
             output.Append(this.Control);
+
+            var linesNeeded = 10 - (lines % 10);
+
+            foreach (var i in Enumerable.Range(1, linesNeeded))
+            {
+                output.AppendLine(GetFillerRecord());
+            }
 
             return output.ToString();
         }
@@ -171,6 +183,8 @@ namespace CertiPay.ACH
 
             sb.Append(ReferenceCode.TrimAndPadRight(8));
 
+            sb.AppendLine();
+
             return sb.ToString();
         }
     }
@@ -182,13 +196,27 @@ namespace CertiPay.ACH
     {
         // TODO record_type, batch_count, block_count, entry_count, entry_hash, debit_total, credit_total, reserved
 
-        //public readonly int RecordType = 6;
+        public readonly int RecordType = 1;
+
+        public int BatchCount;
+
+        public String BlockCount;
+
+        public String EntryAddendaCount;
+
+        public String EntryHash;
+
+        public String TotalDebits;
+
+        public String TotalCredits;
 
         public override string ToString()
         {
             var sb = new StringBuilder(ACHFile.CHARACTERS_PER_LINE);
 
             // TODO
+
+            sb.AppendLine();
 
             return sb.ToString();
         }
@@ -289,6 +317,8 @@ namespace CertiPay.ACH
 
             sb.Append(BatchNumber.ToString().TrimAndPadLeft(7, '0'));
 
+            sb.AppendLine();
+
             return sb.ToString();
         }
     }
@@ -305,6 +335,8 @@ namespace CertiPay.ACH
             var sb = new StringBuilder(ACHFile.CHARACTERS_PER_LINE);
 
             // TODO
+
+            sb.AppendLine();
 
             return sb.ToString();
         }
@@ -362,6 +394,8 @@ namespace CertiPay.ACH
             sb.Append(AddendaRecordIndicator.ToString().TrimAndPadLeft(1, '0'));
 
             sb.Append(TraceNumber.ToString().TrimAndPadLeft(15, '0'));
+
+            sb.AppendLine();
 
             return sb.ToString();
         }
