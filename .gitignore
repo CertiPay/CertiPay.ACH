@@ -105,3 +105,4 @@ UpgradeLog*.XML
 packages/*
 
 *.userprefs
+*Received.json
