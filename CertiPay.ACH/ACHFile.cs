@@ -267,7 +267,10 @@ namespace CertiPay.ACH
             this.EntryCount = file.Batches.Sum(batch => batch.Entries.Count);
 
             this.TotalCredits = file.Batches.Sum(batch => batch.Control.TotalCredits);
+            this.NumberOfCredits = file.Batches.Sum(batch => batch.Control.NumberOfCredits);
+
             this.TotalDebits = file.Batches.Sum(batch => batch.Control.TotalDebits);
+            this.NumberOfDebits = file.Batches.Sum(batch => batch.Control.NumberOfDebits);
 
             this.BlockCount = (int)Math.Ceiling(ACHFile.GetNumberOfLines(file) / 10m);
 
@@ -308,9 +311,19 @@ namespace CertiPay.ACH
         public Decimal TotalDebits = 0;
 
         /// <summary>
+        /// COUNT OF ALL DEBITS IN ‘8’ RECORDS, POSITIONS 33-44.
+        /// </summary>
+        public int NumberOfDebits = 0;
+
+        /// <summary>
         /// TOTAL OF ALL CREDIT AMOUNTS IN ‘8’ RECORDS, POSITIONS 33-44.
         /// </summary>
         public Decimal TotalCredits = 0;
+
+        /// <summary>
+        /// COUNT OF ALL DEBITS IN ‘8’ RECORDS, POSITIONS 33-44.
+        /// </summary>
+        public int NumberOfCredits = 0;
 
         public readonly String Reserved = "      ";
 
