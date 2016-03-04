@@ -537,24 +537,23 @@ namespace CertiPay.ACH
 
             var debits = new[] { TransactionCode.Checking_Debit, TransactionCode.Checking_Debit_Prenote, TransactionCode.Saving_Debit, TransactionCode.Saving_Debit_Prenote };
 
+            this.TotalDebits = batch.Entries.Where(entry => debits.Contains(entry.Transaction_Code)).Sum(entry => entry.Amount);
+            this.NumberOfDebits = batch.Entries.Where(entry => debits.Contains(entry.Transaction_Code)).Count();
+
             var credits = new[] { TransactionCode.Checking_Credit, TransactionCode.Checking_Credit_Prenote, TransactionCode.Saving_Credit, TransactionCode.Saving_Credit_Prenote };
 
-            this.TotalDebits = batch.Entries.Where(entry => debits.Contains(entry.Transaction_Code)).Sum(entry => entry.Amount);
-
             this.TotalCredits = batch.Entries.Where(entry => credits.Contains(entry.Transaction_Code)).Sum(entry => entry.Amount);
+            this.NumberOfCredits = batch.Entries.Where(entry => credits.Contains(entry.Transaction_Code)).Count();
 
-            this.HasDebits = batch.Entries.Where(entry => debits.Contains(entry.Transaction_Code)).Any();
-            this.HasCredits = batch.Entries.Where(entry => credits.Contains(entry.Transaction_Code)).Any();
-
-            if (HasCredits && HasDebits)
+            if (NumberOfCredits > 0 && NumberOfDebits > 0)
             {
                 this.ServiceClass = batch.Header.ServiceClass = ServiceClassCode.Mixed_Debits_And_Credits;
             }
-            else if (HasDebits)
+            else if (NumberOfDebits > 0)
             {
                 this.ServiceClass = batch.Header.ServiceClass = ServiceClassCode.Debits_Only;
             }
-            else if (HasCredits)
+            else if (NumberOfCredits > 0)
             {
                 this.ServiceClass = batch.Header.ServiceClass = ServiceClassCode.Credits_Only;
             }
@@ -608,13 +607,19 @@ namespace CertiPay.ACH
         public Decimal TotalDebits = 0;
 
         /// <summary>
+        /// COUNT OF ALL DEBITS WITHIN BATCH’S TYPE ‘6’ RECORD.
+        /// </summary>
+        public int NumberOfDebits = 0;
+
+        /// <summary>
         /// SUM TOTAL OF ALL CREDIT AMOUNTS WITHIN BATCH’S TYPE ‘6’ RECORD
         /// </summary>
         public Decimal TotalCredits = 0;
 
-        internal Boolean HasDebits = false;
-
-        internal Boolean HasCredits = false;
+        /// <summary>
+        /// COUNT OF ALL CREDITS WITHIN BATCH’S TYPE ‘6’ RECORD.
+        /// </summary>
+        public int NumberOfCredits = 0;
 
         /// <summary>
         /// TAX ID PREFIXED WITH A NUMERIC
