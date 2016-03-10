@@ -27,7 +27,7 @@ Import-Module "$Here\Common" -DisableNameChecking
 
 $NuGet = Join-Path $SolutionRoot ".nuget\nuget.exe"
 
-$MSBuild ="${env:ProgramFiles(x86)}\MSBuild\12.0\Bin\msbuild.exe"
+$MSBuild ="${env:ProgramFiles(x86)}\MSBuild\14.0\Bin\msbuild.exe"
 
 $NUnitVersion = "2.6.4"
 $NUnit = Join-Path $SolutionRoot "packages\NUnit.Runners.$NUnitVersion\tools\nunit-console.exe"
@@ -65,9 +65,10 @@ Task Install-NUnitRunner {
 }
 
 Task Install-MSBuild {
-    if(!(Test-Path "${env:ProgramFiles(x86)}\MSBuild\12.0\Bin\msbuild.exe")) 
-	{ 
-		cinst microsoft-build-tools
+	if(!(Test-Path "${env:ProgramFiles(x86)}\MSBuild\14.0\Bin\msbuild.exe"))
+	{
+		Write-Output "MSBuild not found, Installing..."
+		cinst microsoft-build-tools -y
 	}
 }
 
