@@ -396,6 +396,10 @@ namespace CertiPay.ACH
         {
             var output = new StringBuilder { };
 
+            // This is a fix to ensure the batch header service code matches the calculated control
+
+            this.Header.ServiceClass = this.Control.ServiceClass;
+
             output.Append(this.Header);
 
             foreach (var entry in Entries)
