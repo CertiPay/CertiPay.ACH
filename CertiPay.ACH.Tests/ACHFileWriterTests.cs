@@ -252,57 +252,6 @@ namespace CertiPay.ACH.Tests
         }
 
         [Test, Unit]
-        public void Batch_Header_and_Control_Should_Have_Same_Service_Code_1()
-        {
-            var batch = new Batch { };
-
-            batch.Entries.Add(new EntryDetail
-            {
-                Transaction_Code = TransactionCode.Checking_Credit,
-                ReceivingDFIIdentification = "12345678"
-            });
-
-            Assert.AreEqual(ServiceClassCode.Credits_Only, batch.Header.ServiceClass);
-            Assert.AreEqual(ServiceClassCode.Credits_Only, batch.Control.ServiceClass);
-        }
-
-        [Test, Unit]
-        public void Batch_Header_and_Control_Should_Have_Same_Service_Code_2()
-        {
-            var batch = new Batch { };
-
-            batch.Entries.Add(new EntryDetail
-            {
-                Transaction_Code = TransactionCode.Checking_Debit,
-                ReceivingDFIIdentification = "12345678"
-            });
-
-            Assert.AreEqual(ServiceClassCode.Debits_Only, batch.Control.ServiceClass);
-            Assert.AreEqual(ServiceClassCode.Debits_Only, batch.Header.ServiceClass);
-        }
-
-        [Test, Unit]
-        public void Batch_Header_and_Control_Should_Have_Same_Service_Code_3()
-        {
-            var batch = new Batch { };
-
-            batch.Entries.Add(new EntryDetail
-            {
-                Transaction_Code = TransactionCode.Checking_Debit,
-                ReceivingDFIIdentification = "12345678"
-            });
-
-            batch.Entries.Add(new EntryDetail
-            {
-                Transaction_Code = TransactionCode.Checking_Credit,
-                ReceivingDFIIdentification = "12345678"
-            });
-
-            Assert.AreEqual(ServiceClassCode.Mixed_Debits_And_Credits, batch.Control.ServiceClass);
-            Assert.AreEqual(ServiceClassCode.Mixed_Debits_And_Credits, batch.Header.ServiceClass);
-        }
-
-        [Test, Unit]
         public void Batch_Number_of_Debits_1()
         {
             var batch = new Batch { };
