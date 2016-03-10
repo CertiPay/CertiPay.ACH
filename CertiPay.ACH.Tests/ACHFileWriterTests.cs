@@ -262,8 +262,8 @@ namespace CertiPay.ACH.Tests
                 ReceivingDFIIdentification = "12345678"
             });
 
-            Assert.AreEqual(ServiceClassCode.Credits_Only, batch.Control.ServiceClass);
             Assert.AreEqual(ServiceClassCode.Credits_Only, batch.Header.ServiceClass);
+            Assert.AreEqual(ServiceClassCode.Credits_Only, batch.Control.ServiceClass);
         }
 
         [Test, Unit]
