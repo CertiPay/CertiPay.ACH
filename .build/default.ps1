@@ -34,7 +34,7 @@ $NUnit = Join-Path $SolutionRoot "packages\NUnit.Runners.$NUnitVersion\tools\nun
 
 FormatTaskName (("-"*25) + "[{0}]" + ("-"*25))
 
-Task default -depends Build
+Task default -depends Test
 
 Task Build -depends Restore-Packages {
 	exec { . $MSBuild $SolutionFile /t:Build /v:normal /p:Configuration=$Configuration }
