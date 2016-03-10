@@ -549,15 +549,11 @@ namespace CertiPay.ACH
 
             this.EntryHash = CalculateEntryHash(batch);
 
-            var debits = new[] { TransactionCode.Checking_Debit, TransactionCode.Checking_Debit_Prenote, TransactionCode.Saving_Debit, TransactionCode.Saving_Debit_Prenote };
+            this.TotalDebits = batch.Entries.Where(entry => !IsCredit(entry.Transaction_Code)).Sum(entry => entry.Amount);
+            this.NumberOfDebits = batch.Entries.Where(entry => !IsCredit(entry.Transaction_Code)).Count();
 
-            this.TotalDebits = batch.Entries.Where(entry => debits.Contains(entry.Transaction_Code)).Sum(entry => entry.Amount);
-            this.NumberOfDebits = batch.Entries.Where(entry => debits.Contains(entry.Transaction_Code)).Count();
-
-            var credits = new[] { TransactionCode.Checking_Credit, TransactionCode.Checking_Credit_Prenote, TransactionCode.Saving_Credit, TransactionCode.Saving_Credit_Prenote };
-
-            this.TotalCredits = batch.Entries.Where(entry => credits.Contains(entry.Transaction_Code)).Sum(entry => entry.Amount);
-            this.NumberOfCredits = batch.Entries.Where(entry => credits.Contains(entry.Transaction_Code)).Count();
+            this.TotalCredits = batch.Entries.Where(entry => IsCredit(entry.Transaction_Code)).Sum(entry => entry.Amount);
+            this.NumberOfCredits = batch.Entries.Where(entry => IsCredit(entry.Transaction_Code)).Count();
 
             if (NumberOfCredits > 0 && NumberOfDebits > 0)
             {
@@ -570,6 +566,21 @@ namespace CertiPay.ACH
             else if (NumberOfCredits > 0)
             {
                 this.ServiceClass = batch.Header.ServiceClass = ServiceClassCode.Credits_Only;
+            }
+        }
+
+        internal static Boolean IsCredit(TransactionCode code)
+        {
+            switch (code)
+            {
+                case TransactionCode.Checking_Credit:
+                case TransactionCode.Checking_Credit_Prenote:
+                case TransactionCode.Saving_Credit:
+                case TransactionCode.Saving_Credit_Prenote:
+                    return true;
+
+                default:
+                    return false;
             }
         }
 
