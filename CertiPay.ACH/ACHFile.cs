@@ -543,6 +543,7 @@ namespace CertiPay.ACH
             this.ServiceClass = batch.Header.ServiceClass;
             this.CompanyId = batch.Header.CompanyId;
             this.BatchNumber = batch.Header.BatchNumber;
+            this.OriginatingDFIId = batch.Header.OriginatingDFIIdentification;
 
             this.EntryCount = batch.Entries.Count;
 
