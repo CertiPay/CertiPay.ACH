@@ -323,7 +323,7 @@ namespace CertiPay.ACH
         /// <summary>
         /// COUNT OF ALL DEBITS IN ‘8’ RECORDS, POSITIONS 33-44.
         /// </summary>
-        public int NumberOfCredits = 0;
+        public int NumberOfCredits { get; internal set; }
 
         public readonly String Reserved = "      ";
 
