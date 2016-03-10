@@ -250,5 +250,112 @@ namespace CertiPay.ACH.Tests
                 .ToString()
             );
         }
+
+        [Test, Unit]
+        public void Batch_Header_and_Control_Should_Have_Same_Service_Code_1()
+        {
+            var batch = new Batch { };
+
+            batch.Entries.Add(new EntryDetail
+            {
+                Transaction_Code = TransactionCode.Checking_Credit,
+                ReceivingDFIIdentification = "12345678"
+            });
+
+            Assert.AreEqual(ServiceClassCode.Credits_Only, batch.Control.ServiceClass);
+            Assert.AreEqual(ServiceClassCode.Credits_Only, batch.Header.ServiceClass);
+        }
+
+        [Test, Unit]
+        public void Batch_Header_and_Control_Should_Have_Same_Service_Code_2()
+        {
+            var batch = new Batch { };
+
+            batch.Entries.Add(new EntryDetail
+            {
+                Transaction_Code = TransactionCode.Checking_Debit,
+                ReceivingDFIIdentification = "12345678"
+            });
+
+            Assert.AreEqual(ServiceClassCode.Debits_Only, batch.Control.ServiceClass);
+            Assert.AreEqual(ServiceClassCode.Debits_Only, batch.Header.ServiceClass);
+        }
+
+        [Test, Unit]
+        public void Batch_Header_and_Control_Should_Have_Same_Service_Code_3()
+        {
+            var batch = new Batch { };
+
+            batch.Entries.Add(new EntryDetail
+            {
+                Transaction_Code = TransactionCode.Checking_Debit,
+                ReceivingDFIIdentification = "12345678"
+            });
+
+            batch.Entries.Add(new EntryDetail
+            {
+                Transaction_Code = TransactionCode.Checking_Credit,
+                ReceivingDFIIdentification = "12345678"
+            });
+
+            Assert.AreEqual(ServiceClassCode.Mixed_Debits_And_Credits, batch.Control.ServiceClass);
+            Assert.AreEqual(ServiceClassCode.Mixed_Debits_And_Credits, batch.Header.ServiceClass);
+        }
+
+        [Test, Unit]
+        public void Batch_Number_of_Debits_1()
+        {
+            var batch = new Batch { };
+
+            batch.Entries.Add(new EntryDetail
+            {
+                Transaction_Code = TransactionCode.Checking_Credit,
+                Amount = 101,
+                ReceivingDFIIdentification = "12345678"
+            });
+
+            batch.Entries.Add(new EntryDetail
+            {
+                Transaction_Code = TransactionCode.Checking_Credit,
+                Amount = 99,
+                ReceivingDFIIdentification = "12345678"
+            });
+
+            Assert.AreEqual(2, batch.Control.NumberOfCredits);
+            Assert.AreEqual(200, batch.Control.TotalCredits);
+
+            Assert.AreEqual(0, batch.Control.NumberOfDebits);
+            Assert.AreEqual(0, batch.Control.TotalDebits);
+        }
+
+        [Test, Unit]
+        public void File_Number_of_Debits_1()
+        {
+            var batch = new Batch { };
+
+            batch.Entries.Add(new EntryDetail
+            {
+                Transaction_Code = TransactionCode.Checking_Credit,
+                Amount = 101,
+                ReceivingDFIIdentification = "12345678"
+            });
+
+            batch.Entries.Add(new EntryDetail
+            {
+                Transaction_Code = TransactionCode.Checking_Credit,
+                Amount = 99,
+                ReceivingDFIIdentification = "12345678"
+            });
+
+            var file = new ACHFile { };
+
+            file.Batches.Add(batch);
+
+            Assert.AreEqual(2, file.Control.NumberOfCredits);
+            Assert.AreEqual(200, file.Control.TotalCredits);
+
+            Assert.AreEqual(0, file.Control.NumberOfDebits);
+            Assert.AreEqual(0, file.Control.TotalDebits);
+        }
     }
 }
